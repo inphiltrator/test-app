@@ -1,6 +1,6 @@
-# create-svelte
+# Test App - SvelteKit Projekt
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Eine moderne SvelteKit-Anwendung mit GitHub Actions CI/CD Pipeline für automatisches Testing und Deployment.
 
 ## Creating a project
 
@@ -35,4 +35,24 @@ npm run build
 
 You can preview the production build with `npm run preview`.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## CI/CD Pipeline
+
+Dieses Projekt nutzt GitHub Actions für:
+
+- ✅ **Continuous Integration**: Automatische Tests bei jedem Push/PR
+- ✅ **Continuous Deployment**: Automatisches Deployment zu GitHub Pages
+- ✅ **Multi-Node Testing**: Tests auf Node.js 18.x und 20.x
+- ✅ **Code Quality**: Linting und Formatierung
+
+### Workflows
+
+- **CI Workflow** (`.github/workflows/ci.yml`): Läuft bei Push/PR auf main branch
+- **Deploy Workflow** (`.github/workflows/deploy.yml`): Deployed automatisch zu GitHub Pages
+
+## Tech Stack
+
+- **Frontend**: SvelteKit + TailwindCSS
+- **Testing**: Playwright (E2E) + Vitest (Unit)
+- **Build Tool**: Vite
+- **Deployment**: GitHub Pages mit statischem Adapter
+- **CI/CD**: GitHub Actions

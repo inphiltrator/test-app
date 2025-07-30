@@ -7,27 +7,45 @@
 
   let mapElement;
   let map;
+  let loading = true;
+  let error = null;
 
   onMount(async () => {
-    if (typeof window !== 'undefined') {
-      const L = await import('leaflet');
+    try {
+      if (typeof window !== 'undefined') {
+        const L = await import('leaflet');
 
-      map = L.map(mapElement).setView([36.1699, -115.1398], 10); // Centered on Las Vegas
+        map = L.map(mapElement).setView([36.1699, -115.1398], 10); // Centered on Las Vegas
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 18
+        }).addTo(map);
 
-      const cactusIcon = L.icon({
-        iconUrl: 'https://emojicdn.elk.sh/🌵',
-        iconSize: [32, 32]
-      });
+        const cactusIcon = L.icon({
+          iconUrl: 'https://emojicdn.elk.sh/🌵',
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -32]
+        });
 
-      map.on('click', (e) => {
-        L.marker(e.latlng, { icon: cactusIcon }).addTo(map)
-          .bindPopup(`Marker at ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`)
+        // Add initial marker for Las Vegas
+        L.marker([36.1699, -115.1398], { icon: cactusIcon })
+          .addTo(map)
+          .bindPopup('🌵 Welcome to Las Vegas! <br>Click anywhere to add more cacti!')
           .openPopup();
-      });
+
+        map.on('click', (e) => {
+          L.marker(e.latlng, { icon: cactusIcon }).addTo(map)
+            .bindPopup(`🌵 Cactus at ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`)
+            .openPopup();
+        });
+
+        loading = false;
+      }
+    } catch (err) {
+      error = err.message;
+      loading = false;
     }
   });
 
@@ -38,4 +56,20 @@
   });
 </script>
 
-<div bind:this={mapElement} class="h-96 rounded-lg border-2 border-sage-300"></div>
+{#if loading}
+  <div class="h-96 rounded-lg border-2 border-sage-300 flex items-center justify-center bg-sage-50">
+    <div class="text-center text-sage-600">
+      <div class="text-4xl mb-2 animate-pulse">🌵</div>
+      <p class="text-sm">Loading interactive map...</p>
+    </div>
+  </div>
+{:else if error}
+  <div class="h-96 rounded-lg border-2 border-red-300 flex items-center justify-center bg-red-50">
+    <div class="text-center text-red-600">
+      <div class="text-4xl mb-2">⚠️</div>
+      <p class="text-sm">Failed to load map: {error}</p>
+    </div>
+  </div>
+{:else}
+  <div bind:this={mapElement} class="h-96 rounded-lg border-2 border-sage-300"></div>
+{/if}

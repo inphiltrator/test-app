@@ -1,33 +1,50 @@
-# Test App - SvelteKit Projekt
+# 🌵 Southwest Explorer
 
-Eine moderne SvelteKit-Anwendung mit GitHub Actions CI/CD Pipeline für automatisches Testing und Deployment.
+Welcome to Southwest Explorer, a web application that lets you explore the beauty of the American Southwest on an interactive map!
 
-## Creating a project
+This project was built with the **Southwest App Builder Agent**, an all-in-one application builder that creates complete, production-ready SvelteKit web applications.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## ✨ Features
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- **Interactive Leaflet Map**: Explore a dynamic map centered on Las Vegas, Nevada.
+- **Click-to-Add Markers**: Add custom cactus markers (🌵) anywhere on the map by simply clicking.
+- **Southwest Desert Theme**: Immerse yourself in a beautiful, custom-designed Southwest theme with a unique color palette and Apple-inspired "Liquid Glass" effects.
+- **SSR-Safe**: The application is built with Server-Side Rendering (SSR) in mind, ensuring a fast and reliable user experience.
+- **Responsive Design**: The application is fully responsive and works beautifully on all screen sizes.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+## 🛠️ Tech Stack
 
-## Developing
+- **Framework**: [SvelteKit](https://kit.svelte.dev/)
+- **UI & Theming**: [Tailwind CSS](https://tailwindcss.com/)
+- **Interactive Map**: [Leaflet.js](https://leafletjs.com/)
+- **Language**: TypeScript with JSDoc
+- **Linting & Formatting**: ESLint & Prettier
+- **Testing**: Playwright & Vitest
+- **Deployment**: GitHub Pages via GitHub Actions
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## 🚀 How to Run Locally
 
-```bash
-npm run dev
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/inphiltrator/test-app.git
+    cd test-app
+    ```
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-## Building
+3.  **Start the development server:**
+    ```bash
+    npm run dev -- --open
+    ```
 
-To create a production version of your app:
+4.  **Open your browser** and navigate to `http://localhost:5173`.
+
+## 📦 Build for Production
+
+To create a production version of the app, run:
 
 ```bash
 npm run build
@@ -35,24 +52,6 @@ npm run build
 
 You can preview the production build with `npm run preview`.
 
-## CI/CD Pipeline
+---
 
-Dieses Projekt nutzt GitHub Actions für:
-
-- ✅ **Continuous Integration**: Automatische Tests bei jedem Push/PR
-- ✅ **Continuous Deployment**: Automatisches Deployment zu GitHub Pages
-- ✅ **Multi-Node Testing**: Tests auf Node.js 18.x und 20.x
-- ✅ **Code Quality**: Linting und Formatierung
-
-### Workflows
-
-- **CI Workflow** (`.github/workflows/ci.yml`): Läuft bei Push/PR auf main branch
-- **Deploy Workflow** (`.github/workflows/deploy.yml`): Deployed automatisch zu GitHub Pages
-
-## Tech Stack
-
-- **Frontend**: SvelteKit + TailwindCSS
-- **Testing**: Playwright (E2E) + Vitest (Unit)
-- **Build Tool**: Vite
-- **Deployment**: GitHub Pages mit statischem Adapter
-- **CI/CD**: GitHub Actions
+*This project was built by the Southwest App Builder Agent. ✨*

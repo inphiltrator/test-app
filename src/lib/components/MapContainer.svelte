@@ -3,7 +3,7 @@
 </svelte:head>
 
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, afterUpdate } from 'svelte';
 
   let mapElement;
   let map;
@@ -44,23 +44,25 @@
       });
 
       mapInitialized = true;
-      loading = false;
     } catch (err) {
       error = err.message;
+    } finally {
       loading = false;
     }
   }
 
   onMount(() => {
     if (typeof window !== 'undefined') {
+      // Initially, we are not loading anymore, but waiting for the element to be rendered
       loading = false;
     }
   });
 
-  // Initialize map when mapElement becomes available
-  $: if (mapElement && !mapInitialized && !loading) {
-    initializeMap();
-  }
+  afterUpdate(() => {
+    if (mapElement && !mapInitialized) {
+      initializeMap();
+    }
+  });
 
   onDestroy(() => {
     if (map) {
@@ -69,20 +71,27 @@
   });
 </script>
 
-{#if loading}
-  <div class="h-96 rounded-lg border-2 border-sage-300 flex items-center justify-center bg-sage-50">
-    <div class="text-center text-sage-600">
-      <div class="text-4xl mb-2 animate-pulse">🌵</div>
-      <p class="text-sm">Loading interactive map...</p>
+<div class="relative h-96 rounded-lg border-2 border-sage-300">
+  <!-- Map container - always present -->
+  <div bind:this={mapElement} class="absolute inset-0 w-full h-full"></div>
+  
+  <!-- Loading overlay -->
+  {#if loading}
+    <div class="absolute inset-0 flex items-center justify-center bg-sage-50 rounded-lg">
+      <div class="text-center text-sage-600">
+        <div class="text-4xl mb-2 animate-pulse">🌵</div>
+        <p class="text-sm">Loading interactive map...</p>
+      </div>
     </div>
-  </div>
-{:else if error}
-  <div class="h-96 rounded-lg border-2 border-red-300 flex items-center justify-center bg-red-50">
-    <div class="text-center text-red-600">
-      <div class="text-4xl mb-2">⚠️</div>
-      <p class="text-sm">Failed to load map: {error}</p>
+  {/if}
+  
+  <!-- Error overlay -->
+  {#if error}
+    <div class="absolute inset-0 flex items-center justify-center bg-red-50 rounded-lg">
+      <div class="text-center text-red-600">
+        <div class="text-4xl mb-2">⚠️</div>
+        <p class="text-sm">Failed to load map: {error}</p>
+      </div>
     </div>
-  </div>
-{:else}
-  <div bind:this={mapElement} class="h-96 rounded-lg border-2 border-sage-300"></div>
-{/if}
+  {/if}
+</div>

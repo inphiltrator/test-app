@@ -3,20 +3,31 @@
 </svelte:head>
 
 <script>
-  import { onMount, onDestroy, afterUpdate } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
 
   let mapElement;
   let map;
   let loading = true;
   let error = null;
-  let mapInitialized = false;
 
-  async function initializeMap() {
-    if (mapInitialized || !mapElement) return;
-    
+  onMount(async () => {
+    if (typeof window === 'undefined') {
+      // Ensure this only runs on the client
+      return;
+    }
+
     try {
+      // Dynamically import Leaflet only on the client
       const L = await import('leaflet');
 
+      // A short delay ensures that the DOM element is available after rendering
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      if (!mapElement) {
+        throw new Error('Map container element not found in the DOM.');
+      }
+
+      // Initialize the map
       map = L.map(mapElement).setView([36.1699, -115.1398], 10); // Centered on Las Vegas
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -31,7 +42,6 @@
         popupAnchor: [0, -32]
       });
 
-      // Add initial marker for Las Vegas
       L.marker([36.1699, -115.1398], { icon: cactusIcon })
         .addTo(map)
         .bindPopup('🌵 Welcome to Las Vegas! <br>Click anywhere to add more cacti!')
@@ -43,24 +53,11 @@
           .openPopup();
       });
 
-      mapInitialized = true;
     } catch (err) {
+      console.error('Leaflet initialization failed:', err);
       error = err.message;
     } finally {
       loading = false;
-    }
-  }
-
-  onMount(() => {
-    if (typeof window !== 'undefined') {
-      // Initially, we are not loading anymore, but waiting for the element to be rendered
-      loading = false;
-    }
-  });
-
-  afterUpdate(() => {
-    if (mapElement && !mapInitialized) {
-      initializeMap();
     }
   });
 

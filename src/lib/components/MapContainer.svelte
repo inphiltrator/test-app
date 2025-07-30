@@ -9,45 +9,58 @@
   let map;
   let loading = true;
   let error = null;
+  let mapInitialized = false;
 
-  onMount(async () => {
+  async function initializeMap() {
+    if (mapInitialized || !mapElement) return;
+    
     try {
-      if (typeof window !== 'undefined') {
-        const L = await import('leaflet');
+      const L = await import('leaflet');
 
-        map = L.map(mapElement).setView([36.1699, -115.1398], 10); // Centered on Las Vegas
+      map = L.map(mapElement).setView([36.1699, -115.1398], 10); // Centered on Las Vegas
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-          maxZoom: 18
-        }).addTo(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18
+      }).addTo(map);
 
-        const cactusIcon = L.icon({
-          iconUrl: 'https://emojicdn.elk.sh/🌵',
-          iconSize: [32, 32],
-          iconAnchor: [16, 32],
-          popupAnchor: [0, -32]
-        });
+      const cactusIcon = L.icon({
+        iconUrl: 'https://emojicdn.elk.sh/🌵',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
 
-        // Add initial marker for Las Vegas
-        L.marker([36.1699, -115.1398], { icon: cactusIcon })
-          .addTo(map)
-          .bindPopup('🌵 Welcome to Las Vegas! <br>Click anywhere to add more cacti!')
+      // Add initial marker for Las Vegas
+      L.marker([36.1699, -115.1398], { icon: cactusIcon })
+        .addTo(map)
+        .bindPopup('🌵 Welcome to Las Vegas! <br>Click anywhere to add more cacti!')
+        .openPopup();
+
+      map.on('click', (e) => {
+        L.marker(e.latlng, { icon: cactusIcon }).addTo(map)
+          .bindPopup(`🌵 Cactus at ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`)
           .openPopup();
+      });
 
-        map.on('click', (e) => {
-          L.marker(e.latlng, { icon: cactusIcon }).addTo(map)
-            .bindPopup(`🌵 Cactus at ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`)
-            .openPopup();
-        });
-
-        loading = false;
-      }
+      mapInitialized = true;
+      loading = false;
     } catch (err) {
       error = err.message;
       loading = false;
     }
+  }
+
+  onMount(() => {
+    if (typeof window !== 'undefined') {
+      loading = false;
+    }
   });
+
+  // Initialize map when mapElement becomes available
+  $: if (mapElement && !mapInitialized && !loading) {
+    initializeMap();
+  }
 
   onDestroy(() => {
     if (map) {
